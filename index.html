@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pinkie Notes — My Study Corner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="pinkie-sidebar" id="pinkieSidebar" aria-label="Navigasi utama">
+    <a class="sidebar-logo" href="#home" data-nav="home" aria-label="Pinkie Notes home"><span class="sidebar-bunny">🐰</span><span class="sidebar-brand-text"><b>pinkie notes</b><small>study corner</small></span></a>
+    <div class="sidebar-label">MENU</div>
+    <button class="sidebar-link active" type="button" data-nav="home"><span class="nav-emoji">⌂</span><span>Beranda</span></button>
+    <button class="sidebar-link" type="button" data-nav="subjects"><span class="nav-emoji">▦</span><span>Mata kuliah</span></button>
+    <button class="sidebar-link" type="button" data-nav="tasks"><span class="nav-emoji">☑</span><span>Tugas</span></button>
+    <button class="sidebar-link" type="button" data-nav="notes"><span class="nav-emoji">▤</span><span>Sticky notes</span></button>
+    <button class="sidebar-link" type="button" data-nav="characters"><span class="nav-emoji">🐻</span><span>Galeri karakter</span></button>
+    <div class="sidebar-bottom"><span class="sidebar-flower">✿</span><p>little steps,<br>big dreams ♡</p><button type="button" class="sidebar-collapse" id="sidebarCollapse" aria-label="Kecilkan sidebar" title="Kecilkan sidebar">⇤</button></div>
+  </aside>
+  <button class="sidebar-mobile-toggle" id="sidebarMobileToggle" type="button" aria-label="Buka navigasi">☰</button>
+  <div class="app-shell">
+    <div class="deadline-reminder hidden" id="deadlineReminder" role="status" aria-live="polite">
+      <span class="reminder-icon">♡</span>
+      <div class="reminder-copy"><strong id="reminderTitle">Pengingat deadline</strong><span id="reminderText"></span></div>
+      <button type="button" id="reminderOpenTasks" class="reminder-action">Lihat tugas</button>
+      <button type="button" id="reminderDismiss" class="reminder-dismiss" aria-label="Tutup pengingat">×</button>
+    </div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Pinkie Notes home">
+        <span class="brand-bunny">🐰</span>
+        <span><strong>pinkie notes</strong><small>my little study corner</small></span>
+      </a>
+      <div class="top-actions">
+        <span class="today" id="todayLabel"></span>
+        <button class="soft-button" id="addNoteTop">＋ Sticky note</button>
+      </div>
+    </header>
+
+    <main class="dashboard" id="dashboard">
+      <section class="welcome">
+        <div>
+          <p class="eyebrow">♡ HELLO, STUDY BUNNY ♡</p>
+          <h1>Your little <em>study garden</em></h1>
+          <p class="welcome-copy">Simpan tugas, atur deadline, dan hias setiap mata kuliah dengan teman hewan favoritmu.</p>
+        </div>
+        <div class="welcome-bunny" aria-hidden="true">🐇🌷</div>
+      </section>
+
+      <section class="dashboard-heading">
+        <div><h2>My subjects <span>♡</span></h2><p>Pilih satu kotak untuk membuka halaman tugasnya.</p></div>
+        <div class="mini-count" id="courseCount">0 subjects</div>
+      </section>
+
+      <section class="course-grid" id="courseGrid"></section>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-illustration">🐰 🌸 🐻</div>
+        <h3>Belum ada mata kuliah!</h3>
+        <p>Tekan tombol pink <b>＋</b> di kanan bawah untuk membuat kotak pertamamu.</p>
+      </div>
+
+      <section class="notes-area">
+        <div class="dashboard-heading notes-heading">
+          <div><h2>Little sticky notes <span>✿</span></h2><p>Geser notes ke tempat yang kamu suka.</p></div>
+          <button class="soft-button" id="addNoteInline">＋ Tambah note</button>
+        </div>
+        <div class="sticky-board" id="stickyBoard"></div>
+      </section>
+    </main>
+
+    <section class="all-tasks-page hidden" id="allTasksPage">
+      <div class="page-heading">
+        <p class="eyebrow">KEEP IT ON TRACK ♡</p>
+        <h1>Daftar <em>tugas</em></h1>
+        <p>Semua tugas diurutkan berdasarkan deadline terdekat.</p>
+      </div>
+      <div class="task-summary" id="taskSummary"></div>
+      <div class="all-task-list" id="allTaskList"></div>
+      <div class="empty-tasks" id="allTasksEmpty">Belum ada tugas. Tambahkan tugas dari halaman mata kuliahmu ya! 🌷</div>
+    </section>
+
+    <section class="subject-page hidden" id="subjectPage">
+      <button class="back-button" id="backButton">← Semua mata kuliah</button>
+      <div class="subject-hero" id="subjectHero"></div>
+      <div class="subject-toolbar">
+        <div><h2>Daftar tugas</h2><p>Centang lingkaran setelah tugas selesai ♡</p></div>
+        <button class="primary-button" id="addTaskButton">＋ Tambah tugas</button>
+      </div>
+      <div class="task-list" id="taskList"></div>
+      <div class="empty-tasks hidden" id="emptyTasks">Belum ada tugas. Tambahkan tugas pertamamu! 🌷</div>
+    </section>
+  </div>
+
+  <button class="floating-add" id="floatingAdd" title="Tambah mata kuliah" aria-label="Tambah mata kuliah">＋</button>
+
+  <!-- Course modal -->
+  <div class="modal-backdrop hidden" id="courseModal">
+    <form class="modal-card" id="courseForm">
+      <button type="button" class="modal-close" data-close="courseModal">×</button>
+      <p class="eyebrow">A NEW LITTLE CLASS ♡</p><h2>Tambah mata kuliah</h2>
+      <label>Nama mata kuliah<input id="courseName" required maxlength="70" placeholder="Contoh: Akuntansi Keuangan"></label>
+      <label>Kode mata kuliah <input id="courseCode" maxlength="20" placeholder="Contoh: AKT101"></label>
+      <label>Nama dosen (opsional)<input id="courseLecturer" maxlength="70" placeholder="Nama dosen kamu"></label>
+      <label>Pilih karakter Sylvanian Families
+        <button type="button" class="gallery-open-button" id="openCharacterGallery">♡ Buka galeri karakter</button>
+        <div class="selected-character-preview" id="selectedCharacterPreview"></div>
+        <small class="form-hint">Galeri berisi nama keluarga/karakter. Untuk menampilkan foto asli, pilih "Pasang foto" pada kartu galeri atau unggah foto milikmu.</small>
+      </label>
+      <label>Warna aksen
+        <div class="color-picker" id="courseColorPicker"></div>
+      </label>
+      <button class="primary-button full-button" type="submit">Simpan mata kuliah ♡</button>
+    </form>
+  </div>
+
+  <!-- Character gallery modal -->
+  <div class="modal-backdrop hidden" id="galleryModal">
+    <div class="modal-card gallery-modal">
+      <button type="button" class="modal-close" data-close="galleryModal">×</button>
+      <p class="eyebrow">SYLvanian collection ♡</p>
+      <h2>Galeri karakter</h2>
+      <p class="gallery-intro">Cari karakter yang memiliki foto resmi, lalu pilih untuk mata kuliahmu.</p>
+      <input id="gallerySearch" class="gallery-search" type="search" placeholder="Cari: Freya, Rabbit, Cat, Husky...">
+      <div class="gallery-grid" id="characterGalleryGrid"></div>
+    </div>
+  </div>
+
+  <!-- Task modal -->
+  <div class="modal-backdrop hidden" id="taskModal">
+    <form class="modal-card" id="taskForm">
+      <button type="button" class="modal-close" data-close="taskModal">×</button>
+      <p class="eyebrow">ONE STEP AT A TIME ♡</p><h2>Tambah tugas</h2>
+      <label>Nama tugas<input id="taskName" required maxlength="120" placeholder="Contoh: Rangkuman bab 3"></label>
+      <label>Tanggal pengumpulan<input id="taskDate" type="date" required></label>
+      <label>Jam pengumpulan<input id="taskTime" type="time" value="23:59" required></label>
+      <label>Catatan tugas<textarea id="taskDescription" rows="3" placeholder="Detail tugas, halaman, link, dll."></textarea></label>
+      <label>Warna tulisan
+        <div class="color-picker" id="fontColorPicker"></div>
+      </label>
+      <button class="primary-button full-button" type="submit">Simpan tugas ♡</button>
+    </form>
+  </div>
+
+  <input type="file" id="imageUpload" accept="image/*" hidden>
+  <div class="toast" id="toast"></div>
+  <div class="confirm-overlay hidden" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-modal">
+    <div class="confirm-flower" aria-hidden="true">✿</div>
+    <h2 id="confirmTitle">Yakin ingin menghapus?</h2>
+    <p id="confirmMessage">Item yang dihapus tidak bisa dikembalikan.</p>
+    <div class="confirm-actions">
+      <button type="button" class="confirm-no" id="confirmNo">Tidak, batalkan</button>
+      <button type="button" class="confirm-yes" id="confirmYes">Ya, hapus</button>
+    </div>
+  </div>
+</div>
+  <script src="script.js"></script>
+</body>
+</html>
